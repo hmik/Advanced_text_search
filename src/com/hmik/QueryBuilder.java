@@ -21,7 +21,6 @@ public class QueryBuilder {
     }
 
     public static List<String> getSuggestion(String query){
-        System.out.println("Called");
         List<String> suggestions = new ArrayList<>();
 
 //        String sql = "select * from summary\n" +
@@ -174,17 +173,21 @@ public class QueryBuilder {
 
         int id = count("");
 
-        String SQL  = "INSERT into movie ( movieId, title, categories, summary, description) VALUES(?, ?,?,?,?)";
-        try (Connection con = new ConnectionManager().connect(); PreparedStatement pstmt = con.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS)){
+        String SQL  = "INSERT into movie ( movieId, title, categories, summary, description) VALUES(?, ?,?,?,?);";
+        String SQL2 = "INSERT INTO summary (summary) VALUES(?)";
+        try (Connection con = new ConnectionManager().connect(); PreparedStatement pstmt = con.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement pstmt2 = con.prepareStatement(SQL2, Statement.RETURN_GENERATED_KEYS)){
             pstmt.setInt(1, id);
             pstmt.setString(2,newMovie.getName());
             pstmt.setString(3,newMovie.getCategory());
             pstmt.setString(4,newMovie.getSummary());
             pstmt.setString(5,newMovie.getDescription());
+            pstmt2.setString(1,newMovie.getSummary());
 
             int affectedRows = pstmt.executeUpdate();
+            int affectedRows2 = pstmt2.executeUpdate();
             // check the affected rows
-            if (affectedRows > 0) {
+            if (affectedRows > 0 && affectedRows2 > 0) {
                 Statement st = con.createStatement();
                 String update = "UPDATE movie \n" +
                         "SET \n" +
