@@ -21,6 +21,7 @@ public class QueryBuilder {
     }
 
     public static List<String> getSuggestion(String query){
+        System.out.println("Called");
         List<String> suggestions = new ArrayList<>();
 
 //        String sql = "select * from summary\n" +
